@@ -214,18 +214,18 @@ export interface CreateExchangeResponse {
 
 // Webhooks
 
-export const PayvraWebhookEventType = {
+export const WebhookEventType = {
   PAYMENT_CREATED: "PAYMENT_CREATED",
   PAYMENT_COMPLETED: "PAYMENT_COMPLETED",
   PAYMENT_EXPIRED: "PAYMENT_EXPIRED",
   PAYMENT_FAILED: "PAYMENT_FAILED",
 } as const;
 
-export type PayvraWebhookEventType =
-  (typeof PayvraWebhookEventType)[keyof typeof PayvraWebhookEventType];
+export type WebhookEventType =
+  (typeof WebhookEventType)[keyof typeof WebhookEventType];
 
-interface BasePayvraWebhookEvent {
-  eventType: PayvraWebhookEventType;
+interface BaseWebhookEvent {
+  eventType: WebhookEventType;
   id: string;
   merchantId: string;
   paymentUrl: string;
@@ -251,33 +251,33 @@ interface BasePayvraWebhookEvent {
   createdAt: string;
 }
 
-interface PayvraWebhookEventWithTxHash extends BasePayvraWebhookEvent {
+interface WebhookEventWithTxHash extends BaseWebhookEvent {
   txHash: string;
 }
 
-export type PayvraWebhookEvent =
-  | (BasePayvraWebhookEvent & {
+export type PaymentWebhookEvent =
+  | (BaseWebhookEvent & {
       eventType:
-        | typeof PayvraWebhookEventType.PAYMENT_CREATED
-        | typeof PayvraWebhookEventType.PAYMENT_EXPIRED
-        | typeof PayvraWebhookEventType.PAYMENT_FAILED;
+        | typeof WebhookEventType.PAYMENT_CREATED
+        | typeof WebhookEventType.PAYMENT_EXPIRED
+        | typeof WebhookEventType.PAYMENT_FAILED;
     })
-  | (PayvraWebhookEventWithTxHash & {
-      eventType: typeof PayvraWebhookEventType.PAYMENT_COMPLETED;
+  | (WebhookEventWithTxHash & {
+      eventType: typeof WebhookEventType.PAYMENT_COMPLETED;
     });
 
-export const PayvraPayoutWebhookEventType = {
+export const PayoutWebhookEventType = {
   PAYOUT_CREATED: "PAYOUT_CREATED",
   PAYOUT_CONFIRMING: "PAYOUT_CONFIRMING",
   PAYOUT_COMPLETED: "PAYOUT_COMPLETED",
   PAYOUT_REJECTED: "PAYOUT_REJECTED",
 } as const;
 
-export type PayvraPayoutWebhookEventType =
-  (typeof PayvraPayoutWebhookEventType)[keyof typeof PayvraPayoutWebhookEventType];
+export type PayoutWebhookEventType =
+  (typeof PayoutWebhookEventType)[keyof typeof PayoutWebhookEventType];
 
-interface BasePayvraPayoutWebhookEvent {
-  eventType: PayvraPayoutWebhookEventType;
+interface BasePayoutWebhookEvent {
+  eventType: PayoutWebhookEventType;
   id: string;
   wallet: {
     merchantId: string;
@@ -295,16 +295,18 @@ interface BasePayvraPayoutWebhookEvent {
   txHash: string | null;
 }
 
-export type PayvraPayoutWebhookEvent =
-  | (BasePayvraPayoutWebhookEvent & {
+export type PayoutWebhookEvent =
+  | (BasePayoutWebhookEvent & {
       eventType:
-        | typeof PayvraPayoutWebhookEventType.PAYOUT_CREATED
-        | typeof PayvraPayoutWebhookEventType.PAYOUT_REJECTED;
+        | typeof PayoutWebhookEventType.PAYOUT_CREATED
+        | typeof PayoutWebhookEventType.PAYOUT_REJECTED;
       txHash: null;
     })
-  | (BasePayvraPayoutWebhookEvent & {
+  | (BasePayoutWebhookEvent & {
       eventType:
-        | typeof PayvraPayoutWebhookEventType.PAYOUT_CONFIRMING
-        | typeof PayvraPayoutWebhookEventType.PAYOUT_COMPLETED;
+        | typeof PayoutWebhookEventType.PAYOUT_CONFIRMING
+        | typeof PayoutWebhookEventType.PAYOUT_COMPLETED;
       txHash: string;
     });
+
+export type WebhookEvent = PaymentWebhookEvent | PayoutWebhookEvent;

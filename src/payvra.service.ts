@@ -21,6 +21,17 @@ interface PayvraConfig {
   baseUrl?: string;
 }
 
+class PayvraApiError extends Error {
+  constructor(
+    message: string,
+    public statusCode?: number,
+    public response?: unknown
+  ) {
+    super(message);
+    this.name = "PayvraApiError";
+  }
+}
+
 export class PayvraClient {
   private readonly baseUrl: string;
   private readonly headers: {
@@ -36,22 +47,38 @@ export class PayvraClient {
     };
   }
 
+  private handleError(error: unknown, operation: string): never {
+    if (axios.isAxiosError(error)) {
+      throw new PayvraApiError(
+        `${operation} failed: ${
+          error.response?.data?.message || error.message
+        }`,
+        error.response?.status,
+        error.response?.data
+      );
+    }
+    throw new PayvraApiError(
+      `${operation} failed: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
+  }
+
   public async fetchCurrencies() {
     try {
       const response = await axios.post<FetchCurrenciesResponse>(
         `${this.baseUrl}/currencies`,
-        {
-          headers: this.headers,
-        }
+        {},
+        { headers: this.headers }
       );
 
       if (!response.data) {
-        throw new Error("Failed to fetch currencies");
+        throw new PayvraApiError("No data received when fetching currencies");
       }
 
       return response.data;
     } catch (error) {
-      throw new Error(`Error creating invoice: ${error}`);
+      throw this.handleError(error, "Fetch currencies");
     }
   }
 
@@ -60,18 +87,16 @@ export class PayvraClient {
       const response = await axios.post<CreateInvoiceResponse>(
         `${this.baseUrl}/merchants/invoice/create`,
         params,
-        {
-          headers: this.headers,
-        }
+        { headers: this.headers }
       );
 
       if (!response.data) {
-        throw new Error("Failed to create invoice");
+        throw new PayvraApiError("No data received when creating invoice");
       }
 
       return response.data;
     } catch (error) {
-      throw new Error(`Error creating invoice: ${error}`);
+      throw this.handleError(error, "Create invoice");
     }
   }
 
@@ -88,12 +113,12 @@ export class PayvraClient {
       );
 
       if (!response.data) {
-        throw new Error("Failed to fetch invoice");
+        throw new PayvraApiError("No data received when fetching invoice");
       }
 
       return response.data;
     } catch (error) {
-      throw new Error(`Error fetching invoice: ${error}`);
+      throw this.handleError(error, "Fetch invoice");
     }
   }
 
@@ -108,12 +133,14 @@ export class PayvraClient {
       );
 
       if (!response.data) {
-        throw new Error("Failed to create whitelabel invoice");
+        throw new PayvraApiError(
+          "No data received when creating whitelabel invoice"
+        );
       }
 
       return response.data;
     } catch (error) {
-      throw new Error(`Error creating whitelabel invoice: ${error}`);
+      throw this.handleError(error, "Create whitelabel invoice");
     }
   }
 
@@ -128,12 +155,12 @@ export class PayvraClient {
       );
 
       if (!response.data) {
-        throw new Error("Failed to create payout");
+        throw new PayvraApiError("No data received when creating payout");
       }
 
       return response.data;
     } catch (error) {
-      throw new Error(`Error creating payout: ${error}`);
+      throw this.handleError(error, "Create payout");
     }
   }
 
@@ -150,18 +177,18 @@ export class PayvraClient {
       );
 
       if (!response.data) {
-        throw new Error("Failed to fetch payout");
+        throw new PayvraApiError("No data received when fetching payout");
       }
 
       return response.data;
     } catch (error) {
-      throw new Error(`Error fetching payout: ${error}`);
+      throw this.handleError(error, "Fetch payout");
     }
   }
 
   public async fetchExchangePairs() {
     try {
-      const response = await axios.get<FetchExchangePairsResponse>(
+      const response = await axios.post<FetchExchangePairsResponse>(
         `${this.baseUrl}/exchange/pairs`,
         {
           headers: this.headers,
@@ -169,12 +196,14 @@ export class PayvraClient {
       );
 
       if (!response.data) {
-        throw new Error("Failed to fetch exchange pairs");
+        throw new PayvraApiError(
+          "No data received when fetching exchange pairs"
+        );
       }
 
       return response.data;
     } catch (error) {
-      throw new Error(`Error fetching exchange pairs: ${error}`);
+      throw this.handleError(error, "Fetch exchange pairs");
     }
   }
 
@@ -189,12 +218,12 @@ export class PayvraClient {
       );
 
       if (!response.data) {
-        throw new Error("Failed to create exchange");
+        throw new PayvraApiError("No data received when creating exchange");
       }
 
       return response.data;
     } catch (error) {
-      throw new Error(`Error creating exchange: ${error}`);
+      throw this.handleError(error, "Create exchange");
     }
   }
 }

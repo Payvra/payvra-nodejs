@@ -6,7 +6,7 @@ Payvra is a modern cryptocurrency payment processor that enables businesses to a
 
 Install the Payvra SDK using npm:
 
-```
+```bash
 npm install payvra-sdk
 ```
 
@@ -14,10 +14,10 @@ npm install payvra-sdk
 
 Import and initialize the Payvra client:
 
-```
-import { createPayvraClient } from 'payvra-sdk';
+```typescript
+import { PayvraClient } from 'payvra-sdk';
 
-const client = createPayvraClient({
+const client = new PayvraClient({
   apiKey: 'YOUR_API_KEY',
   baseUrl: 'https://payvra.com/api/v1' // Optional, defaults to production URL
 });
@@ -27,12 +27,12 @@ const client = createPayvraClient({
 
 Get a list of supported cryptocurrencies and their networks:
 
-```
+```typescript
 const { currencies } = await client.fetchCurrencies();
 ```
 
 Success response:
-```
+```json
 {
   "currencies": [
     {
@@ -57,7 +57,7 @@ Success response:
 
 Generate a new payment invoice:
 
-```
+```typescript
 const invoice = await client.createInvoice({
   amount: 100,
   amountCurrency: 'USD',
@@ -70,7 +70,7 @@ const invoice = await client.createInvoice({
 ```
 
 Success response:
-```
+```json
 {
    "id":"cm47930od4b9i11dknivo92u1",
    "merchantId":"cm3lww0bm000vdmukkkbrxdzu",
@@ -99,7 +99,7 @@ Success response:
 
 Retrieve details of an existing invoice:
 
-```
+```typescript
 const invoice = await client.fetchInvoice({
   invoiceId: 'cm47930od4b9i11dknivo92u1'
 });
@@ -109,7 +109,7 @@ const invoice = await client.fetchInvoice({
 
 Initiate a cryptocurrency withdrawal:
 
-```
+```typescript
 const payout = await client.createPayout({
   currency: 'LTC',
   network: 'Litecoin',
@@ -122,7 +122,7 @@ const payout = await client.createPayout({
 
 Get current exchange rates between supported pairs:
 
-```
+```typescript
 const { pairs } = await client.fetchExchangePairs();
 ```
 
@@ -130,7 +130,7 @@ const { pairs } = await client.fetchExchangePairs();
 
 The SDK includes TypeScript types for webhook events. Handle incoming webhooks:
 
-```
+```typescript
 import type { WebhookEvent } from 'payvra-sdk';
 
 function handleWebhook(event: WebhookEvent) {

@@ -45,9 +45,7 @@ export interface ExchangePair {
 
 export interface FetchCurrenciesParams {}
 
-export interface FetchCurrenciesResponse {
-  currencies: PayvraCurrency[];
-}
+export type FetchCurrenciesResponse = PayvraCurrency[];
 
 export interface CreateInvoiceParams {
   amount: number;
@@ -214,18 +212,19 @@ export interface CreateExchangeResponse {
 
 // Webhooks
 
-export const WebhookEventType = {
+export const PaymentWebhookEventType = {
   PAYMENT_CREATED: "PAYMENT_CREATED",
+  PAYMENT_CONFIRMING: "PAYMENT_CONFIRMING",
   PAYMENT_COMPLETED: "PAYMENT_COMPLETED",
   PAYMENT_EXPIRED: "PAYMENT_EXPIRED",
   PAYMENT_FAILED: "PAYMENT_FAILED",
 } as const;
 
-export type WebhookEventType =
-  (typeof WebhookEventType)[keyof typeof WebhookEventType];
+export type PaymentWebhookEventType =
+  (typeof PaymentWebhookEventType)[keyof typeof PaymentWebhookEventType];
 
-interface BaseWebhookEvent {
-  eventType: WebhookEventType;
+interface BasePaymentWebhookEvent {
+  eventType: PaymentWebhookEventType;
   id: string;
   merchantId: string;
   paymentUrl: string;
@@ -251,19 +250,21 @@ interface BaseWebhookEvent {
   createdAt: string;
 }
 
-interface WebhookEventWithTxHash extends BaseWebhookEvent {
+interface PaymentWebhookEventWithTxHash extends BasePaymentWebhookEvent {
   txHash: string;
 }
 
 export type PaymentWebhookEvent =
-  | (BaseWebhookEvent & {
+  | (BasePaymentWebhookEvent & {
       eventType:
-        | typeof WebhookEventType.PAYMENT_CREATED
-        | typeof WebhookEventType.PAYMENT_EXPIRED
-        | typeof WebhookEventType.PAYMENT_FAILED;
+        | typeof PaymentWebhookEventType.PAYMENT_CREATED
+        | typeof PaymentWebhookEventType.PAYMENT_EXPIRED
+        | typeof PaymentWebhookEventType.PAYMENT_FAILED;
     })
-  | (WebhookEventWithTxHash & {
-      eventType: typeof WebhookEventType.PAYMENT_COMPLETED;
+  | (PaymentWebhookEventWithTxHash & {
+      eventType:
+        | typeof PaymentWebhookEventType.PAYMENT_CONFIRMING
+        | typeof PaymentWebhookEventType.PAYMENT_COMPLETED;
     });
 
 export const PayoutWebhookEventType = {

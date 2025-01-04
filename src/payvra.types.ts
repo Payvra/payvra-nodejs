@@ -169,7 +169,7 @@ export interface CreatePayoutResponse {
   };
   status: PayvraPayoutStatus;
   address: string;
-  txHash: string;
+  txHash: string | null;
   amount: number;
   createdAt: string;
 }

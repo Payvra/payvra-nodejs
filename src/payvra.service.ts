@@ -190,9 +190,8 @@ export class PayvraClient {
     try {
       const response = await axios.post<FetchExchangePairsResponse>(
         `${this.baseUrl}/exchange/pairs`,
-        {
-          headers: this.headers,
-        }
+        {},
+        { headers: this.headers }
       );
 
       if (!response.data) {

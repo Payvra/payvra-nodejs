@@ -28,29 +28,27 @@ const client = new PayvraClient({
 Get a list of supported cryptocurrencies and their networks:
 
 ```typescript
-const { currencies } = await client.fetchCurrencies();
+const currencies = await client.fetchCurrencies();
 ```
 
 Success response:
 ```json
-{
-  "currencies": [
-    {
-      "symbol": "BTC",
-      "name": "Bitcoin",
-      "networks": [
-        {
-          "network": "BTC",
-          "name": "Bitcoin",
-          "minConfirm": 2,
-          "withdrawFee": 0.00001,
-          "withdrawMin": 0.0001,
-          "depositMin": 0.0001
-        }
-      ]
-    }
-  ]
-}
+[
+  {
+    "symbol": "BTC",
+    "name": "Bitcoin",
+    "networks": [
+      {
+        "network": "BTC",
+        "name": "Bitcoin",
+        "minConfirm": 2,
+        "withdrawFee": 0.00001,
+        "withdrawMin": 0.0001,
+        "depositMin": 0.0001
+      }
+    ]
+  }
+]
 ```
 
 ### Create Invoice
@@ -123,7 +121,7 @@ const payout = await client.createPayout({
 Get current exchange rates between supported pairs:
 
 ```typescript
-const { pairs } = await client.fetchExchangePairs();
+const pairs = await client.fetchExchangePairs();
 ```
 
 ## Webhook Events

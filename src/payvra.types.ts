@@ -181,9 +181,7 @@ export interface FetchPayoutResponse {
   payout: CreatePayoutResponse;
 }
 
-export interface FetchExchangePairsResponse {
-  pairs: ExchangePair[];
-}
+export type FetchExchangePairsResponse = ExchangePair[];
 
 export interface CreateExchangeParams {
   fromCurrency: string;

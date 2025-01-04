@@ -160,6 +160,7 @@ export interface CreatePayoutParams {
 }
 
 export interface CreatePayoutResponse {
+  id: string;
   wallet: {
     currency: string;
   };
